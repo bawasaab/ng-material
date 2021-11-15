@@ -1,2 +1,30 @@
+<mat-sidenav-container>
+    
+    <mat-sidenav #sidenav role="navigation">
+        <p>Im sidenav </p>
+    </mat-sidenav>
 
-<router-outlet></router-outlet>
+    <mat-sidenav-content>
+
+        <mat-toolbar color="primary">
+
+            <button mat-icon-button (click)="sidenav.toggle()">
+                <mat-icon>menu</mat-icon>
+            </button>
+
+            <div>
+                LOGO
+            </div>
+            
+            <div class="pull-right">
+                <a routerLink="/signup">Signup</a>&nbsp;
+                <a routerLink="/login">Login</a>&nbsp;
+                <a routerLink="/training">Training</a>
+            </div>
+
+        </mat-toolbar>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+
+</mat-sidenav-container>
+
