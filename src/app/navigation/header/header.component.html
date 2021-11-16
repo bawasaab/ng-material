@@ -10,10 +10,10 @@
     </div>
     
     <div class="pull-right">
-        <a routerLink="/signup">Signup</a>&nbsp;
-        <a routerLink="/login">Login</a>&nbsp;
-        <a routerLink="/training">Training</a>&nbsp;
-        <a>Logout</a>
+        <a *ngIf="!isAuth" routerLink="/signup">Signup</a>&nbsp;
+        <a *ngIf="!isAuth" routerLink="/login">Login</a>&nbsp;
+        <a *ngIf="isAuth" routerLink="/training">Training</a>&nbsp;
+        <a *ngIf="isAuth">Logout</a>
     </div>
 
 </mat-toolbar>
