@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { User } from './user.model';
 import { AuthData } from './auth.data.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,9 @@ export class AuthService {
   public authChange$ = new Subject<boolean>();
   private user!: User | null;
 
-  constructor() { }
+  constructor(
+    private router: Router
+  ) { }
 
   registerUser( authData: AuthData ) {
 
@@ -21,7 +24,7 @@ export class AuthService {
       userId: Math.round(Math.random() * 10000).toString()
     };
 
-    this.authChange$.next(true);
+    this.authSuccessfully();
   }
 
   login( authData: AuthData ) {
@@ -31,13 +34,14 @@ export class AuthService {
       userId: Math.round(Math.random() * 10000).toString()
     };
 
-    this.authChange$.next(true);
+    this.authSuccessfully();
   }
 
   logout() {
 
     this.user = null;
     this.authChange$.next(false);
+    this.router.navigate([`/login`]);
   }
 
   getUser() {
@@ -47,5 +51,10 @@ export class AuthService {
   isAuth() {
 
     return this.user != null;
+  }
+
+  private authSuccessfully() {
+    this.authChange$.next(true);
+    this.router.navigate([`/training`]);
   }
 }
