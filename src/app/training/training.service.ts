@@ -26,8 +26,13 @@ export class TrainingService {
   }
 
   startExcercise( selectedId: string ) {
-
+console.log('selectedId', selectedId);
     this.runningExcercise = this.availableExcercises.find( (ex) => ex.id === selectedId );
     this.excerciseChanges$.next({ ...this.runningExcercise });
+  }
+
+  getRunningExcercise() {
+
+    return { ...this.runningExcercise };
   }
 }
