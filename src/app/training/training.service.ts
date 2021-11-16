@@ -7,7 +7,7 @@ import { Exercise } from "./excercise.model";
 })
 export class TrainingService {
 
-  excerciseChanges$ = new Subject<Exercise>();
+  excerciseChanges$ = new Subject<Exercise | null>();
 
   private availableExcercises: Exercise[] = [
     { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
@@ -18,6 +18,7 @@ export class TrainingService {
 
   // private runningExcercise: Exercise | undefined;
   private runningExcercise: any;
+  private excercises: Exercise[] = [];
 
   constructor() { }
 
@@ -26,9 +27,33 @@ export class TrainingService {
   }
 
   startExcercise( selectedId: string ) {
-console.log('selectedId', selectedId);
+
     this.runningExcercise = this.availableExcercises.find( (ex) => ex.id === selectedId );
     this.excerciseChanges$.next({ ...this.runningExcercise });
+  }
+
+  completeExcercise() {
+
+    this.excercises.push({ 
+      ...this.runningExcercise, 
+      date: new Date,
+      state: 'completed'
+    });
+    this.runningExcercise = null;
+    this.excerciseChanges$.next(null);
+  }
+
+  cancelExcercise( progress: number ) {
+
+    this.excercises.push({ 
+      ...this.runningExcercise, 
+      duration: this.runningExcercise.duration * (progress / 100),
+      calories: this.runningExcercise.duration * (progress / 100),
+      date: new Date,
+      state: 'cancelled'
+    });
+    this.runningExcercise = null;
+    this.excerciseChanges$.next(null);
   }
 
   getRunningExcercise() {

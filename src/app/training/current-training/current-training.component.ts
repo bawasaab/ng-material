@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { Subscription } from 'rxjs';
 import { TrainingService } from '../training.service';
@@ -11,7 +11,6 @@ import { StopTrainingComponent } from "./stop-training.component";
 })
 export class CurrentTrainingComponent implements OnInit, OnDestroy {
 
-  @Output() trainingExit = new EventEmitter();
   progress = 0;
   timer: any;
   dialogRefSubs!: Subscription;
@@ -39,7 +38,7 @@ export class CurrentTrainingComponent implements OnInit, OnDestroy {
     this.dialogRefSubs = dialogRef.afterClosed().subscribe( (result) => {
 
       if( result ) {
-        this.trainingExit.emit();
+        this.trainingService.cancelExcercise( this.progress );
       } else {
         this.startOrresumeTimer();
       }
@@ -59,12 +58,13 @@ export class CurrentTrainingComponent implements OnInit, OnDestroy {
 
       if( this.progress >= 100 )  {
 
+        this.trainingService.completeExcercise();
         clearInterval(this.timer);
       }
     }, step );
   }
 
   ngOnDestroy() {
-    this.dialogRefSubs.unsubscribe();
+    // this.dialogRefSubs.unsubscribe();
   }
 }
