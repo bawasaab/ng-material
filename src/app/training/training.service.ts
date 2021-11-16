@@ -1,3 +1,4 @@
+import { Subject } from "rxjs";
 import { Injectable } from '@angular/core';
 import { Exercise } from "./excercise.model";
 
@@ -6,6 +7,8 @@ import { Exercise } from "./excercise.model";
 })
 export class TrainingService {
 
+  excerciseChanges$ = new Subject<Exercise>();
+
   private availableExcercises: Exercise[] = [
     { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
     { id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15 },
@@ -13,9 +16,18 @@ export class TrainingService {
     { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 }
   ];
 
+  // private runningExcercise: Exercise | undefined;
+  private runningExcercise: any;
+
   constructor() { }
 
   getAvailbleExcecises() {
     return this.availableExcercises.slice(); // we create a new array
+  }
+
+  startExcercise( selectedId: string ) {
+
+    this.runningExcercise = this.availableExcercises.find( (ex) => ex.id === selectedId );
+    this.excerciseChanges$.next({ ...this.runningExcercise });
   }
 }
