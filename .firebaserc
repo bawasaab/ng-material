@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "ng-fitness-tracker-3d099": {
+      "hosting": {
+        "ng-material-twelve": [
+          "ng-fitness-tracker-3d099"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "ng-fitness-tracker-3d099"
+  }
+}
