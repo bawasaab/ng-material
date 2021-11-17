@@ -1,6 +1,7 @@
-import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { Subscription } from 'rxjs';
+import { TrainingService } from '../training.service';
 import { StopTrainingComponent } from "./stop-training.component";
 
 @Component({
@@ -10,12 +11,14 @@ import { StopTrainingComponent } from "./stop-training.component";
 })
 export class CurrentTrainingComponent implements OnInit, OnDestroy {
 
-  @Output() trainingExit = new EventEmitter();
   progress = 0;
   timer: any;
   dialogRefSubs!: Subscription;
 
-  constructor( private dialog: MatDialog ) { }
+  constructor( 
+    private dialog: MatDialog,
+    private trainingService: TrainingService
+  ) { }
 
   ngOnInit(): void {
  
@@ -35,7 +38,7 @@ export class CurrentTrainingComponent implements OnInit, OnDestroy {
     this.dialogRefSubs = dialogRef.afterClosed().subscribe( (result) => {
 
       if( result ) {
-        this.trainingExit.emit();
+        this.trainingService.cancelExcercise( this.progress );
       } else {
         this.startOrresumeTimer();
       }
@@ -43,18 +46,25 @@ export class CurrentTrainingComponent implements OnInit, OnDestroy {
   }
 
   startOrresumeTimer() {
+
+    // const step = this.trainingService.getRunningExcercise().duration / 100 * 1000;
+    const step = this.trainingService.getRunningExcercise().duration / 100 * 1000;
+
+    console.log('step', step);
+
     this.timer = setInterval( () => {
 
-      this.progress = this.progress + 5;
+      this.progress = this.progress + 1;
 
       if( this.progress >= 100 )  {
 
+        this.trainingService.completeExcercise();
         clearInterval(this.timer);
       }
-    }, 1000 )
+    }, step );
   }
 
   ngOnDestroy() {
-    this.dialogRefSubs.unsubscribe();
+    // this.dialogRefSubs.unsubscribe();
   }
 }
