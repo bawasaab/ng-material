@@ -47,7 +47,6 @@ export class CurrentTrainingComponent implements OnInit, OnDestroy {
 
   startOrresumeTimer() {
 
-    // const step = this.trainingService.getRunningExcercise().duration / 100 * 1000;
     const step = this.trainingService.getRunningExcercise().duration / 100 * 1000;
 
     console.log('step', step);

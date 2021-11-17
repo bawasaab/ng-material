@@ -1,42 +1,62 @@
-import { Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { Injectable } from '@angular/core';
 import { Exercise } from "./excercise.model";
+import { Firestore, collectionData, doc, docData, collection, addDoc, deleteDoc, updateDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrainingService {
 
+  availableExcercisesCollection = 'availableExcercises';
+  finihedExcercisesCollection = 'finihedExcercises';
+
+  dated = new Date();
+
   excerciseChanges$ = new Subject<Exercise | null>();
 
-  private availableExcercises: Exercise[] = [
-    { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
-    { id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15 },
-    { id: 'side-lunges', name: 'Side Lunges', duration: 120, calories: 18 },
-    { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 }
-  ];
+  private availableExcercises: Exercise[] = [];
 
-  // private runningExcercise: Exercise | undefined;
   private runningExcercise: any;
   private excercises: Exercise[] = [];
 
-  constructor() { }
+  constructor(
+    private firestore: Firestore
+  ) { }
 
   getAvailbleExcecises() {
-    return this.availableExcercises.slice(); // we create a new array
+
+    let notesRef = collection(this.firestore, `${this.availableExcercisesCollection}`);
+    return collectionData( notesRef, {
+      idField: 'id'
+    } ) as Observable<Exercise[]>;
+  }
+
+  getExcerciseById( selectedId: string ) {
+    let notesDocRef = doc(this.firestore, `${this.availableExcercisesCollection}/${selectedId}`);
+    return docData( notesDocRef, {
+      idField: 'id'
+    } ) as Observable<Exercise>;
   }
 
   startExcercise( selectedId: string ) {
 
-    this.runningExcercise = this.availableExcercises.find( (ex) => ex.id === selectedId );
-    this.excerciseChanges$.next({ ...this.runningExcercise });
+    console.log('selectedId', selectedId);
+    
+    this.getExcerciseById(selectedId).subscribe( (result) => {
+
+      // this.runningExcercise = this.availableExcercises.find( (ex) => ex.id === selectedId );
+      this.runningExcercise = result;
+      this.excerciseChanges$.next({ ...this.runningExcercise });
+    } );
+
   }
 
   completeExcercise() {
 
-    this.excercises.push({ 
+    this.insertExcercise({ 
       ...this.runningExcercise, 
-      date: new Date,
+      date: '2021-11-11',
       state: 'completed'
     });
     this.runningExcercise = null;
@@ -45,15 +65,21 @@ export class TrainingService {
 
   cancelExcercise( progress: number ) {
 
-    this.excercises.push({ 
+    this.insertExcercise({ 
       ...this.runningExcercise, 
       duration: this.runningExcercise.duration * (progress / 100),
       calories: this.runningExcercise.calories * (progress / 100),
-      date: new Date,
+      date: '2021-11-11',
       state: 'cancelled'
     });
     this.runningExcercise = null;
     this.excerciseChanges$.next(null);
+  }
+
+  insertExcercise( excercise: Exercise ) {
+
+    const notesRef = collection(this.firestore, `${this.finihedExcercisesCollection}`);
+    return addDoc( notesRef, excercise);
   }
 
   getRunningExcercise() {
@@ -62,6 +88,10 @@ export class TrainingService {
   }
 
   getCompletedOrCancelledExcercises() {
-    return this.excercises.slice();
+    
+    let notesRef = collection(this.firestore, `${this.finihedExcercisesCollection}`);
+    return collectionData( notesRef, {
+      idField: 'id'
+    } ) as Observable<Exercise[]>;
   }
 }

@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 export class NewTrainingComponent implements OnInit {
 
   public excercises!: Exercise[];
-  public item$!: Observable<Exercise[]>;
+  public excercises$!: Observable<Exercise[]>;
 
   constructor(
     private trainingService: TrainingService,
@@ -22,7 +22,15 @@ export class NewTrainingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.excercises = this.trainingService.getAvailbleExcecises();
+
+    // old school method
+    // this.trainingService.getAvailbleExcecises().subscribe( (result: Exercise[]) => {
+    //   this.excercises = result;
+    //   console.log('this.excercises', this.excercises);
+    // } );
+
+    // new school method
+    this.excercises$ = this.trainingService.getAvailbleExcecises();
   }
 
   onStartTraining( form: NgForm ) {
