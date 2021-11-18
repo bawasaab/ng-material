@@ -19,8 +19,14 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 import { StopTrainingComponent } from "./training/current-training/stop-training.component";
 import { AuthService } from './auth/auth.service';
 
+// import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+// import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import { getAnalytics, provideAnalytics } from '@angular/fire/analytics';
 
 import { environment } from "../environments/environment";
 import { AuthGaurd } from './auth/auth.gaurd';
@@ -47,8 +53,14 @@ import { AuthGaurd } from './auth/auth.gaurd';
     MaterialModule,
     ReactiveFormsModule,
 
-    provideFirebaseApp(() => initializeApp( environment.firebase )),
+    // provideFirebaseApp(() => initializeApp( environment.firebase )),
+    // provideFirestore(() => getFirestore()),    
+
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
+    provideAuth(() => getAuth()),
+    provideStorage(() => getStorage()),
+    provideAnalytics(() => getAnalytics()),
   ],
   providers: [AuthService, AuthGaurd],
   bootstrap: [AppComponent],

@@ -1,6 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collectionData, doc, docData, collection, addDoc, deleteDoc, updateDoc } from '@angular/fire/firestore';
+// import { Firestore, collectionData, doc, docData, collection, addDoc, deleteDoc, updateDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+
+import {
+  collection,
+  doc,
+  docData,
+  DocumentReference,
+  CollectionReference,
+  Firestore,
+  onSnapshot,
+  query,
+  where,
+  Unsubscribe,
+  Query,
+  DocumentData,
+  collectionData,
+  collectionChanges,
+  docSnapshots,
+  addDoc, deleteDoc, updateDoc
+} from '@angular/fire/firestore';
 
 export interface Note {
   id?: string;
