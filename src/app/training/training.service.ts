@@ -2,6 +2,7 @@ import { Observable, Subject } from "rxjs";
 import { Injectable } from '@angular/core';
 import { Exercise } from "./excercise.model";
 import { Firestore, collectionData, doc, docData, collection, addDoc, deleteDoc, updateDoc } from '@angular/fire/firestore';
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,8 @@ export class TrainingService {
   private excercises: Exercise[] = [];
 
   constructor(
-    private firestore: Firestore
+    private firestore: Firestore,
+    private snakeBar: MatSnackBar,
   ) { }
 
   getAvailbleExcecises() {
@@ -61,6 +63,9 @@ export class TrainingService {
     });
     this.runningExcercise = null;
     this.excerciseChanges$.next(null);
+    this.snakeBar.open( "Excercise Completed Successfully", 'OK', {
+      duration: 3000
+    });
   }
 
   cancelExcercise( progress: number ) {
@@ -74,6 +79,9 @@ export class TrainingService {
     });
     this.runningExcercise = null;
     this.excerciseChanges$.next(null);
+    this.snakeBar.open( "Excercise cancelled by user", 'OK', {
+      duration: 3000
+    });
   }
 
   insertExcercise( excercise: Exercise ) {

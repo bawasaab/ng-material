@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Subject, Subscription } from 'rxjs';
+import { UiService } from 'src/app/shared/ui.service';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -7,12 +9,15 @@ import { AuthService } from '../auth.service';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss']
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, OnDestroy {
 
   maxDate!: Date;
+  loadingSubs!: Subscription;
+  isLoading = false;
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private uiService: UiService
   ) { }
 
   ngOnInit(): void {
@@ -26,10 +31,19 @@ export class SignupComponent implements OnInit {
     // console.log('form', form);
     // console.log('form.value', form.value);
 
+    this.loadingSubs = this.uiService.loadingStateChanged.subscribe( (isLoading) => { this.isLoading = isLoading } );
+
     this.authService.registerUser({
       email: form.value.email,
       password: form.value.password
     });
+  }
+
+  ngOnDestroy() {
+
+    if( this.loadingSubs ) {
+      this.loadingSubs.unsubscribe();
+    }
   }
 
 }
