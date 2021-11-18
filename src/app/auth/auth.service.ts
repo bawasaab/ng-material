@@ -60,6 +60,9 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UiService } from '../shared/ui.service';
 
+import { Store } from '@ngrx/store';
+import * as fromApp from "../app.reducer";
+
 
 @Injectable({
   providedIn: 'root'
@@ -77,7 +80,10 @@ export class AuthService {
     private storage: Storage,
     private firestore: Firestore,
     private snakeBar: MatSnackBar,
-    private uiService: UiService
+    private uiService: UiService,
+    private store: Store<{
+      ui: fromApp.State
+    }>
   ) {
 
     // user observable, not user doc
@@ -147,12 +153,21 @@ export class AuthService {
 
     try {
 
-      this.uiService.loadingStateChanged.next(true);
+      this.store.dispatch({
+        type: 'START_LOADING'
+      });
+      // this.uiService.loadingStateChanged.next(true);
       let result = await signInWithEmailAndPassword(this.afAuth, email, password);
-      this.uiService.loadingStateChanged.next(false);
+      // this.uiService.loadingStateChanged.next(false);
+      this.store.dispatch({
+        type: 'STOP_LOADING'
+      });
       return result;
     } catch( ex ) {
-      this.uiService.loadingStateChanged.next(false);
+      this.store.dispatch({
+        type: 'STOP_LOADING'
+      });
+      // this.uiService.loadingStateChanged.next(false);
     }
   }
 
@@ -162,7 +177,10 @@ export class AuthService {
 
     try {
 
-      this.uiService.loadingStateChanged.next(true);
+      this.store.dispatch({
+        type: 'START_LOADING'
+      });
+      // this.uiService.loadingStateChanged.next(true);
       const credential = await createUserWithEmailAndPassword(
         this.afAuth,
         email,
@@ -189,11 +207,17 @@ export class AuthService {
         uid: credential.user.uid,
       };
       this.authSuccessfully();
-      this.uiService.loadingStateChanged.next(false);
+      // this.uiService.loadingStateChanged.next(false);
+      this.store.dispatch({
+        type: 'STOP_LOADING'
+      });
       return addDoc( notesRef, in_user);
     } catch( ex ) {
 
-      this.uiService.loadingStateChanged.next(false);
+      // this.uiService.loadingStateChanged.next(false);
+      this.store.dispatch({
+        type: 'STOP_LOADING'
+      });
       // let msg = ex.toString();
       let msg = 'Already exists';
       this.uiService.showSnackbar(msg, 'OK', 3000);

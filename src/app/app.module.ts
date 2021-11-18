@@ -12,11 +12,13 @@ import { StopTrainingComponent } from "./training/current-training/stop-training
 import { AuthService } from './auth/auth.service';
 
 import { AuthGaurd } from './auth/auth.gaurd';
-import { AuthModule } from './feature-modules/auth/auth.module';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material/material.module';
 import { TrainingModule } from './feature-modules/training/training.module';
 import { SharedModule } from './shared/shared.module';
+import { StoreModule } from '@ngrx/store';
+import { AuthModule } from './feature-modules/auth/auth.module';
+import { appReducer } from './app.reducer';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,10 @@ import { SharedModule } from './shared/shared.module';
 
     CommonModule,
     MaterialModule,
-    SharedModule
+    SharedModule,
+    StoreModule.forRoot({
+      ui: appReducer
+    }, {})
   ],
   providers: [AuthService, AuthGaurd],
   bootstrap: [AppComponent],
