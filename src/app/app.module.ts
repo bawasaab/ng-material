@@ -16,6 +16,7 @@ import { AuthModule } from './feature-modules/auth/auth.module';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material/material.module';
 import { TrainingModule } from './feature-modules/training/training.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { TrainingModule } from './feature-modules/training/training.module';
 
     CommonModule,
     MaterialModule,
+    SharedModule
   ],
   providers: [AuthService, AuthGaurd],
   bootstrap: [AppComponent],
