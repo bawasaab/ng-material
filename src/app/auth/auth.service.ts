@@ -196,9 +196,7 @@ export class AuthService {
       this.uiService.loadingStateChanged.next(false);
       // let msg = ex.toString();
       let msg = 'Already exists';
-      this.snakeBar.open( msg, 'OK', {
-        duration: 3000
-      });
+      this.uiService.showSnackbar(msg, 'OK', 3000);
       // throw ex;
       return ex;
     }
