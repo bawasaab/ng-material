@@ -57,6 +57,8 @@ import {
   percentage,
   getDownloadURL
 } from '@angular/fire/storage';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { UiService } from '../shared/ui.service';
 
 
 @Injectable({
@@ -73,7 +75,9 @@ export class AuthService {
     private router: Router,
     private afAuth: Auth,
     private storage: Storage,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private snakeBar: MatSnackBar,
+    private uiService: UiService
   ) {
 
     // user observable, not user doc
@@ -141,8 +145,15 @@ export class AuthService {
 
   async emailLogin(email: string, password: string) : Promise<any> {
 
-    let result = await signInWithEmailAndPassword(this.afAuth, email, password);
-    return result;
+    try {
+
+      this.uiService.loadingStateChanged.next(true);
+      let result = await signInWithEmailAndPassword(this.afAuth, email, password);
+      this.uiService.loadingStateChanged.next(false);
+      return result;
+    } catch( ex ) {
+      this.uiService.loadingStateChanged.next(false);
+    }
   }
 
   async emailSignUp(email: string, password: string)
@@ -151,6 +162,7 @@ export class AuthService {
 
     try {
 
+      this.uiService.loadingStateChanged.next(true);
       const credential = await createUserWithEmailAndPassword(
         this.afAuth,
         email,
@@ -177,11 +189,18 @@ export class AuthService {
         uid: credential.user.uid,
       };
       this.authSuccessfully();
-
+      this.uiService.loadingStateChanged.next(false);
       return addDoc( notesRef, in_user);
     } catch( ex ) {
 
-      throw ex;
+      this.uiService.loadingStateChanged.next(false);
+      // let msg = ex.toString();
+      let msg = 'Already exists';
+      this.snakeBar.open( msg, 'OK', {
+        duration: 3000
+      });
+      // throw ex;
+      return ex;
     }
   }
 
